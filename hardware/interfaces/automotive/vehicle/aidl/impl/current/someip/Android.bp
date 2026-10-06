@@ -1,0 +1,125 @@
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+// 1. Thư viện tĩnh SomeipVehicleHardware
+cc_library_static {
+    name: "SomeipVehicleHardware",
+    vendor: true,
+    host_supported: true,
+    defaults: [
+        "VehicleHalDefaults",
+    ],
+    srcs: [
+        "SomeipVehicleHardware.cpp",
+    ],
+    local_include_dirs: ["."],
+    export_include_dirs: ["."],
+    include_dirs: [
+        "hardware/interfaces/automotive/vehicle/aidl/impl/current/hardware/include",
+        "external/sdv/vsomeip/interface",
+    ],
+    header_libs: [
+        "IVehicleHardware",
+        "VehicleHalUtilHeaders",
+    ],
+    export_header_lib_headers: [
+        "IVehicleHardware",
+        "VehicleHalUtilHeaders",
+    ],
+    static_libs: [
+        "VehicleHalUtils",
+    ],
+    shared_libs: [
+        "libvsomeip3",
+        "libvsomeip3-cfg",
+        "libvsomeip3-sd",
+        "libbase",
+        "libutils",
+        "liblog",
+    ],
+    cflags: [
+        "-Wall",
+        "-Werror",
+        "-Wno-unused-parameter",
+    ],
+}
+
+// 2. Binary chạy thử Android VHAL Client (Node 2)
+cc_binary {
+    name: "someip_vhal_client",
+    vendor: true,
+    host_supported: true,
+    defaults: [
+        "VehicleHalDefaults",
+    ],
+    srcs: [
+        "SomeipVhalClientMain.cpp",
+    ],
+    local_include_dirs: ["."],
+    include_dirs: [
+        "hardware/interfaces/automotive/vehicle/aidl/impl/current/hardware/include",
+        "external/sdv/vsomeip/interface",
+    ],
+    header_libs: [
+        "IVehicleHardware",
+        "VehicleHalUtilHeaders",
+    ],
+    static_libs: [
+        "SomeipVehicleHardware",
+        "VehicleHalUtils",
+    ],
+    shared_libs: [
+        "libvsomeip3",
+        "libvsomeip3-cfg",
+        "libvsomeip3-sd",
+        "libbase",
+        "libutils",
+        "liblog",
+    ],
+    cflags: [
+        "-Wall",
+        "-Werror",
+        "-Wno-unused-parameter",
+    ],
+}
+
+// 3. Binary chạy giả lập ECU Xe Hơi (Node 1 - Server)
+cc_binary {
+    name: "ecu_battery_simulator",
+    vendor: true,
+    host_supported: true,
+    srcs: [
+        "EcuBatterySimulator.cpp",
+    ],
+    include_dirs: [
+        "external/sdv/vsomeip/interface",
+    ],
+    shared_libs: [
+        "libvsomeip3",
+        "libvsomeip3-cfg",
+        "libvsomeip3-sd",
+        "libutils",
+        "liblog",
+    ],
+    cflags: [
+        "-Wall",
+        "-Werror",
+        "-Wno-unused-parameter",
+    ],
+}
+
+// 4. File cấu hình JSON tự động copy vào /vendor/etc/vsomeip/
+prebuilt_etc {
+    name: "vsomeip-vhal.json",
+    vendor: true,
+    sub_dir: "vsomeip",
+    src: "vsomeip-vhal.json",
+}
+
+prebuilt_etc {
+    name: "vsomeip-ecu.json",
+    vendor: true,
+    sub_dir: "vsomeip",
+    src: "vsomeip-ecu.json",
+}

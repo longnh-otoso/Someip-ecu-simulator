@@ -1,0 +1,27 @@
+{
+    "unicast" : "192.168.97.1",
+    "logging" : { "level" : "debug", "console" : "true" },
+    "applications" : [
+        { "name" : "EcuBatteryService", "id" : "0x1111" }
+    ],
+    "services" : [
+        {
+            "service" : "0x1234",
+            "instance" : "0x5678",
+            "unreliable" : "30509",
+            "events" : [
+                { "event" : "0x8001", "is_field" : "true" }
+            ],
+            "eventgroups" : [
+                { "eventgroup" : "0x01", "events" : [ "0x8001" ] }
+            ]
+        }
+    ],
+    "routing" : "EcuBatteryService",
+    "service-discovery" : {
+        "enable" : "true",
+        "multicast" : "224.244.224.245",
+        "port" : "30490",
+        "protocol" : "udp"
+    }
+}
